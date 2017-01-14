@@ -42,6 +42,7 @@ make target | description
 init | initialize the directory for use with the Paper Makefile
 help | display all available targets
 all  | create PDFs from all TEX files in the directory. This is the default target.
+blind | same as all but blind the authors for review
 update | update all git repositories
 check | use the style-check.rb script to check all used TEX files for styles
 add-ieee | download IEEEtran style and add the cls file
