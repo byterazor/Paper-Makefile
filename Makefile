@@ -17,7 +17,7 @@ init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS)
 	@echo "	creating git repository"
 	@git init
 	@echo "	creating initial commit"
-	@git add .latexmkrc .gitignore Makefile *.tex
+	@git add .latexmkrc .gitignore Makefile *.tex *.cls
 	@git commit -m "ADD initial commit of paper directory"
 
 update: init $(REPOS)
