@@ -60,13 +60,13 @@ remove-ieee:
 	@cp Paper-Makefile/template.tex $@
 
 Images:
-	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Images
+	@git clone $(IMAGE_REPO) Images
 
 Acronyms:
-	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Acronyms
+	@git clone $(ACRONYMS_REPO) Acronyms
 
 Bibliography:
-	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Bibliography
+	@git clone $(BIBLIOGRAPHY_REPO) Bibliography
 
 .style-check.d: style-check
 	@ln -s style-check/rules .style-check.d
