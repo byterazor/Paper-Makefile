@@ -8,11 +8,26 @@ TARGETS+=$(foreach f,$(MAIN_TEX), $(subst .tex,.pdf,$f))
 REPOS+=Paper-Makefile Images Acronyms Bibliography style-check
 
 
-.PHONY: all update init clean check init-git add-ieee remove-ieee
+.PHONY: all update init clean check init-git add-ieee remove-ieee help
 
 all: $(TARGETS)
 
 init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
+
+help:
+	@echo "Paper Makefile 0.1 by Dominik Meyer <dmeyer@federationhq.de>"
+	@echo
+	@echo "Targets: "
+	@echo	"	init		- initialize the current directory for use with the Paper Makefile"
+	@echo	"	help		- this information"
+	@echo "	all		- build pdf and all dependencies, this is the default target"
+	@echo "	update		- update all repositories"
+	@echo "	check		- check all dependent tex files for style"
+	@echo "	add-ieee	- download IEEEtran style and add the cls file"
+	@echo "	remove-ieee	- remove the IEEEtran style"
+	@echo "	clean		- clean up all generated files"
+	@echo "	dist-clean	- do a clean and remove all repositories"
+
 
 .git:
 	@echo "Initializing Paper Directory"
