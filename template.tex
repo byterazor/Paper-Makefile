@@ -1,0 +1,55 @@
+\documentclass[9pt,conference]{IEEEtran}
+\usepackage[utf8]{inputenc}                             % using UTF-8 locales
+\usepackage{amsmath}                                    % for handling mathematical formulas
+\usepackage[english]{babel}                             % writing an English paper
+\usepackage{csquotes}
+\usepackage[T1]{fontenc}                                % better fonts
+\usepackage{booktabs}                                   % nicer tabular lines
+\usepackage{url}                                        % nicer display of URLs
+\usepackage[nonumberlist,acronym,section]{glossaries}   % for acronyms and glossaries
+\usepackage{graphicx}
+\usepackage{fixltx2e}
+\usepackage{datatool}
+\usepackage{rotating}
+\usepackage{xcolor}
+% package to automatically format numbers with thousands separator
+\usepackage[group-separator={,},group-minimum-digits=3]{siunitx}
+
+\usepackage[backend=biber,style=ieee]{biblatex}
+%bibliography imports has to stay on *one* line at the moment!
+\bibliography{Bibliography/base.bib, Bibliography/publications_dmeyer.bib, Bibliography/building_automation.bib}
+
+\loadglsentries{Acronyms/acronyms}
+
+%
+% how to display acronyms in the text
+%
+\renewcommand{\glstextformat}[1]{\emph{#1}}
+\renewcommand{\glsdisplayfirst}[4]{#1#4 (#3)}
+\renewcommand*{\dtlrealformat}[1]{\num{#1}}
+
+\renewcommand{\dtldisplaystarttab}{\toprule}
+\renewcommand{\dtldisplayafterhead}{\midrule}
+\renewcommand{\dtldisplayendtab}{\\\bottomrule}
+
+\title{Paper Title}
+\date{\today}
+\author{\IEEEauthorblockN{Author1,~Author2,~Author3,~and~Author4}
+\IEEEauthorblockA{Institute of the authors\\
+University of the authors
+\\
+Email: \{alias1,alias2,alias3,alias4\}@email-provider}}
+
+\begin{document}
+\maketitle
+%import your individual chapters with input from a *different* directory
+%putting them in the main paper directory will break the Makefile
+
+%\input{Chapters/abstract}
+%\input{Chapters/introduction}
+%\input{Chapters/related_work}
+%\input{Chapters/model}
+%\input{Chapters/example}
+%\input{Chapters/conclusion}
+\printbibliography%
+\end{document}
