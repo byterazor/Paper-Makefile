@@ -10,7 +10,7 @@ REPOS+=Paper-Makefile Images Acronyms Bibliography style-check
 
 .PHONY: all update init clean check init-git add-ieee remove-ieee
 
-all: init $(TARGETS)
+all: $(TARGETS)
 
 init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 
@@ -38,11 +38,11 @@ IEEEtran.cls:
 remove-ieee:
 	@if [ -e IEEEtran.cls ]; then rm IEEEtran.cls; fi
 
-%.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS)
+%.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 	latexmk	-r .latexmkrc -pdf $(subst .pdf,.tex,$@)
 
 %.tex:
-	@cp Paper-Makefile/template.tex $(INIT_TEX)
+	@cp Paper-Makefile/template.tex $@
 
 Images:
 	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Images
