@@ -1,0 +1,8 @@
+include Paper-Makefile/Makefile
+
+IMAGE_REPO=ssh://server/home/repos/Images
+ACRONYMS_REPO=ssh://server/home/repos/Acronyms
+BIBLIOGRAPHY_REPO=ssh://server/home/repos/Bibliography
+
+Paper-Makefile/Makefile:
+	git clone git@github.com:byterazor/Paper-Makefile.git
