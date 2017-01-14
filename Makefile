@@ -1,12 +1,13 @@
--include .files
 -include .deps
-
+SHELL=/bin/bash
 MAIN_TEX+=$(shell find -maxdepth 1 -name '*.tex' -exec basename '{}' \;)
+TEXFILES+=$(MAIN_TEX)
+TEXFILES+=$(foreach f,$(MAIN_TEX),$(shell for i in `cat $f | grep -v "%" | grep "\\\\input{" | sed 's/.*\\\input{//' | sed 's/}.*//'`; do echo "$$i.tex "; done))
 TARGETS+=$(foreach f,$(MAIN_TEX), $(subst .tex,.pdf,$f))
-REPOS+=Images Acronyms Bibliography
+REPOS+=Images Acronyms Bibliography style-check
 
 
-.PHONY: all update init clean
+.PHONY: all update init clean check
 
 all: init $(TARGETS)
 
@@ -14,6 +15,9 @@ init: .latexmkrc .gitignore $(REPOS)
 
 update: init $(REPOS)
 	@$(foreach r, $(REPOS), cd $r; git pull;cd ..;)
+
+check: .style-check.d
+	@$(foreach f, $(TEXFILES), style-check/style-check.rb $f;)
 
 %.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS)
 	latexmk	-r .latexmkrc -pdf $(subst .pdf,.tex,$@)
@@ -26,6 +30,12 @@ Acronyms:
 
 Bibliography:
 	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Bibliography
+
+.style-check.d: style-check
+	@ln -s style-check/rules .style-check.d
+
+style-check:
+	@git clone https://github.com/byterazor/style-check.git
 
 Images/%_hd.jpg: Images/%.jpg Images
 		@echo **** Reducing Size of $@ ****
@@ -77,15 +87,7 @@ Images/%.svg: Images/%.dot Images
 .latexmkrc:
 	@echo '$$pdflatex' "= 'pdflatex -interaction=nonstopmode';" >> $@
 
-.files: $(MAIN_TEX)
-	@if [ -e .files ]; then rm .files; fi
-	@echo -n "TEXFILES+=" >> .files
-	@$(foreach f,$(MAIN_TEX), echo $f >> .files)
-	@echo >>.files
-	@$(foreach f,$(MAIN_TEX),for i in `cat $f | grep -v "%" | grep "\\\\input{" | sed 's/.*\\\input{//' | sed 's/}.*//'`; do echo TEXFILES+=$$i.tex >>.files; done)
-	@echo >> .files
-
-.deps: .files $(TEXFILES) $(MAIN_TEX)
+.deps: $(TEXFILES)
 	@if [ -e .deps ]; then rm .deps; fi
 	@$(foreach f,$(TEXFILES), for i in `cat $f | grep includegraphics | sed 's/.*\\\includegraphics\[*.*\]*{//' | sed 's/\\\only.*{//' | sed 's/}//g' | sed 's/;//'`;do echo IMAGES+=$$i >>.deps; done;)
 	@echo -n "BIB+=" >> .deps
