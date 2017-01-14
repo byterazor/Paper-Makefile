@@ -22,7 +22,7 @@ init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 	@git add .latexmkrc .gitignore Makefile *.tex *.cls
 	@git commit -m "ADD initial commit of paper directory"
 
-update: init $(REPOS)
+update: $(REPOS)
 	@$(foreach r, $(REPOS), cd $r; git pull;cd ..;)
 
 check: .style-check.d
