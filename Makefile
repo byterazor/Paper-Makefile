@@ -1,17 +1,24 @@
 -include .deps
 SHELL=/bin/bash
+INIT_TEX+=paper.tex
 MAIN_TEX+=$(shell find -maxdepth 1 -name '*.tex' -exec basename '{}' \;)
 TEXFILES+=$(MAIN_TEX)
 TEXFILES+=$(foreach f,$(MAIN_TEX),$(shell for i in `cat $f | grep -v "%" | grep "\\\\input{" | sed 's/.*\\\input{//' | sed 's/}.*//'`; do echo "$$i.tex "; done))
 TARGETS+=$(foreach f,$(MAIN_TEX), $(subst .tex,.pdf,$f))
-REPOS+=Images Acronyms Bibliography style-check
+REPOS+=Paper-Makefile Images Acronyms Bibliography style-check
 
 
-.PHONY: all update init clean check
+.PHONY: all update init clean check init-git add-ieee remove-ieee
 
 all: init $(TARGETS)
 
-init: .latexmkrc .gitignore $(REPOS)
+init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS)
+	@echo "Initializing Paper Directory"
+	@echo "	creating git repository"
+	@git init
+	@echo "	creating initial commit"
+	@git add .latexmkrc .gitignore Makefile *.tex
+	@git commit -m "ADD initial commit of paper directory"
 
 update: init $(REPOS)
 	@$(foreach r, $(REPOS), cd $r; git pull;cd ..;)
@@ -19,8 +26,21 @@ update: init $(REPOS)
 check: .style-check.d
 	@$(foreach f, $(TEXFILES), style-check/style-check.rb $f;)
 
+add-ieee: IEEEtran.cls
+
+IEEEtran.cls:
+	@wget https://www.ieee.org/documents/IEEEtran.zip 1>/dev/null 2>/dev/null
+	@unzip -j IEEEtran.zip IEEEtran/IEEEtran.cls >/dev/null
+	@rm IEEEtran.zip
+
+remove-ieee:
+	@if [ -e IEEEtran.cls ]; then rm IEEEtran.cls; fi
+
 %.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS)
 	latexmk	-r .latexmkrc -pdf $(subst .pdf,.tex,$@)
+
+%.tex:
+	@cp Paper-Makefile/template.tex $(INIT_TEX)
 
 Images:
 	@git clone ssh://tiweb.hsu-hh.de:9222/home/repos/Paper-Shared/Images
@@ -83,6 +103,7 @@ Images/%.svg: Images/%.dot Images
 	@echo *.deps >> .gitignore
 	@echo *.files >> .gitignore
 	@echo *-blx.bib >> .gitignore
+	@echo .style-check.d >> .gitignore
 
 .latexmkrc:
 	@echo '$$pdflatex' "= 'pdflatex -interaction=nonstopmode';" >> $@
