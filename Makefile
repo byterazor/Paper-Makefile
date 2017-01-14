@@ -14,7 +14,7 @@ all: init $(TARGETS)
 
 init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 
-.git: 
+.git:
 	@echo "Initializing Paper Directory"
 	@echo "	creating git repository"
 	@git init
@@ -121,7 +121,7 @@ Images/%.svg: Images/%.dot Images
 	@echo >> .deps
 
 clean:
-	@(rm .deps .files *.pdf *.aux *.bbl *.blg *.dvi *.ps *.log *.run.xml *.fls *.*latexmk *-blx.bib; echo "") 1>/dev/null 2>/dev/null
+	@(rm .deps .files *.pdf *.bcf *.aux *.bbl *.blg *.dvi *.ps *.log *.run.xml *.fls *.*latexmk *-blx.bib; echo "") 1>/dev/null 2>/dev/null
 
 dist-clean: clean
 	-@rm $(REPOS) -rf
