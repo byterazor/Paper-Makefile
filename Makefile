@@ -12,7 +12,9 @@ REPOS+=Paper-Makefile Images Acronyms Bibliography style-check
 
 all: init $(TARGETS)
 
-init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS)
+init: $(INIT_TEX) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
+
+.git: 
 	@echo "Initializing Paper Directory"
 	@echo "	creating git repository"
 	@git init
