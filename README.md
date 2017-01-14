@@ -26,6 +26,19 @@ new idea.
 I started to manage all my images, acronyms and bibliography in
 individual git repositories and each of my papers is a git repository of its own.
 
+## Dependencies
+
+* make
+* git
+* wget
+* convert
+* inkscape
+* grep
+* sed
+* latexmk
+* pdflatex
+* bash
+
 ## Installation
 
 1. create a new directory for holding your paper (mkdir <dirname>)
