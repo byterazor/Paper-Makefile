@@ -21,6 +21,7 @@ help:
 	@echo	"	init		- initialize the current directory for use with the Paper Makefile"
 	@echo	"	help		- this information"
 	@echo "	all		- build pdf and all dependencies, this is the default target"
+	@echo "	blind		- same as all, but blind the authors"
 	@echo "	update		- update all repositories"
 	@echo "	check		- check all dependent tex files for style"
 	@echo "	add-ieee	- download IEEEtran style and add the cls file"
@@ -52,6 +53,9 @@ IEEEtran.cls:
 
 remove-ieee:
 	@if [ -e IEEEtran.cls ]; then rm IEEEtran.cls; fi
+
+blind: all
+	$(foreach f,$(subst .tex,,$(MAIN_TEX)),cat $f.tex | sed 's/\\begin{document}/\\author{}\\begin{document}/' > /tmp/$f_blind.tex;latexmk	-r .latexmkrc -pdf /tmp/$f_blind.tex;rm /tmp/$f_blind.tex;)
 
 %.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 	latexmk	-r .latexmkrc -pdf $(subst .pdf,.tex,$@)
