@@ -5,4 +5,4 @@ ACRONYMS_REPO=ssh://server/home/repos/Acronyms
 BIBLIOGRAPHY_REPO=ssh://server/home/repos/Bibliography
 
 Paper-Makefile/Makefile:
-	git clone git@github.com:byterazor/Paper-Makefile.git
+	git clone https://github.com/byterazor/Paper-Makefile.git
