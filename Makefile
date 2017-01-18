@@ -57,10 +57,10 @@ remove-ieee:
 blind: all
 	$(foreach f,$(subst .tex,,$(MAIN_TEX)),cat $f.tex | sed 's/\\begin{document}/\\author{}\\begin{document}/' > /tmp/$f_blind.tex;latexmk	-r .latexmkrc -pdf /tmp/$f_blind.tex;rm /tmp/$f_blind.tex;)
 
-%.pdf: $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
+$(TARGETS): $(MAIN_TEX) $(TEXFILES) $(IMAGES) $(BIB) $(ACRONYMS) IEEEtran.cls .latexmkrc .gitignore $(REPOS) .git
 	latexmk	-r .latexmkrc -pdf $(subst .pdf,.tex,$@)
 
-%.tex:
+$(INIT_TEX):
 	@cp Paper-Makefile/template.tex $@
 
 Images:
@@ -110,6 +110,7 @@ Images/%.svg: Images/%.dot Images
 		@echo "**** Generating SVG $@ from dot file $<"
 		@dot -Tsvg -o $@ $<
 
+
 .gitignore:
 	@echo *.pdf >> .gitignore
 	@echo *.aux >> .gitignore
@@ -131,16 +132,14 @@ Images/%.svg: Images/%.dot Images
 
 .deps: $(TEXFILES)
 	@if [ -e .deps ]; then rm .deps; fi
-	@$(foreach f,$(TEXFILES), for i in `cat $f | grep includegraphics | sed 's/.*\\\includegraphics\[*.*\]*{//' | sed 's/\\\only.*{//' | sed 's/}//g' | sed 's/;//'`;do echo IMAGES+=$$i >>.deps; done;)
-	@echo -n "BIB+=" >> .deps
-	@$(foreach f,$(MAIN_TEX), cat $f | grep "\\\\bibliography" | sed 's/\\bibliography{//' | sed 's/}//g' | sed 's/,/ /g'| sed 's/}//g' | sed 's/,/ /g' >>.deps;)
-	@echo >> .deps
-	@echo -n "ACRONYMS+=" >> .deps
-	@$(foreach f,$(MAIN_TEX), cat $f | grep "\\\\loadglsentries" | sed 's/\\loadglsentries{//' | sed 's/}/.tex/g' | sed 's/,/ /g'| sed 's/}//g' >>.deps;)
-	@echo >> .deps
+	@$(foreach f, $(TEXFILES), if [ ! -e $f ]; then echo "ERROR: $f missing"; exit 1;fi;)
+	@$(foreach f,$(TEXFILES), for i in `cat $f | grep includegraphics | sed 's/.*\\\includegraphics\[*.*\]*{//' | sed 's/\\\only.*{//' | sed 's/}//g' | sed 's/;//'`;do echo IMAGES+=$$i >>.deps; echo $$i: Images >> .deps; done;)
+	@$(foreach f,$(MAIN_TEX), for i in `cat $f | grep "\\\\\bibliography" | sed 's/\\\bibliography{//' | sed 's/}//g' | sed 's/,/ /g'| sed 's/}//g' | sed 's/,/ /g'`; do echo BIB+=$$i >>.deps; echo $$i: Bibliography >> .deps; done;)
+	@$(foreach f,$(MAIN_TEX), for i in `cat $f | grep "\\\\\loadglsentries" | sed 's/\\\loadglsentries{//' | sed 's/}/.tex/g' | sed 's/,/ /g'| sed 's/}//g'`; do echo ACRONYMS+=$$i >> .deps; echo $$i: Acronyms  >>.deps; done)
 
 clean:
 	@(rm .deps .files *.pdf *.bcf *.aux *.bbl *.blg *.dvi *.ps *.log *.run.xml *.fls *.*latexmk *-blx.bib; echo "") 1>/dev/null 2>/dev/null
 
 dist-clean: clean
 	-@rm $(REPOS) -rf
+
