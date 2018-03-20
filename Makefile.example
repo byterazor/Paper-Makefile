@@ -1,0 +1,6 @@
+SRC=paper.tex
+
+all: paper.pdf
+
+include Paper-Makefile/Makefile
+
