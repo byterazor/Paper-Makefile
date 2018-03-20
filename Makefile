@@ -17,7 +17,7 @@ DEPFLAGS = -M -MP -MF $(DEPDIR)/$*.d
 LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdf $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
 
 .SECONDARY: .latexmkrc
-.PHONY: clean watermark IEEE
+.PHONY: clean watermark IEEE base
 
 %.pdf : %.dot
 	@echo "**** Generating $@ from dot file $< ****"
@@ -45,6 +45,28 @@ IEEEtran.cls:
 	@wget https://www.ieee.org/documents/ieee-latex-conference-template.zip 1>/dev/null 2>/dev/null
 	@unzip -j ieee-latex-conference-template.zip IEEEtran/IEEEtran.cls >/dev/null
 	@rm ieee-latex-conference-template.zip
+
+base: .gitignore .latexmkrc
+
+.gitignore:
+	@echo *.pdf >> .gitignore
+	@echo *.aux >> .gitignore
+	@echo *.bbl >> .gitignore
+	@echo *.bcf >> .gitignore
+	@echo *.blg >> .gitignore
+	@echo *.dvi >> .gitignore
+	@echo *.log >> .gitignore
+	@echo *.run.xml >> .gitignore
+	@echo *.fls >> .gitignore
+	@echo *.*latexmk >> .gitignore
+	@echo *.files >> .gitignore
+	@echo *-blx.bib >> .gitignore
+	@echo *.out >> .gitignore
+	@echo **/*.dep >> .gitignore
+	@echo .d >> .gitignore
+
+.latexmkrc:
+	@echo '$$pdflatex' "= 'pdflatex -interaction=nonstopmode';" >> $@
 
 watermark.tex:
 	cp Paper-Makefile/watermark.tex $@
