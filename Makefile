@@ -46,7 +46,14 @@ IEEEtran.cls:
 	@unzip -j ieee-latex-conference-template.zip IEEEtran/IEEEtran.cls >/dev/null
 	@rm ieee-latex-conference-template.zip
 
-base: .gitignore .latexmkrc
+base: .gitignore .latexmkrc .git/hooks/post-commit
+
+.git/hooks/post-commit .git/hooks/post-merge .git/hooks/post-checkout: Paper-Makefile/post-commit
+	cp Paper-Makefile/post-commit .git/hooks/
+	cp Paper-Makefile/post-commit .git/hooks/post-merge
+	cp Paper-Makefile/post-commit .git/hooks/post-checkout
+	chmod u+x .git/hooks/*
+	.git/hooks/post-commit
 
 .gitignore:
 	@echo *.pdf >> .gitignore
