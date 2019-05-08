@@ -14,7 +14,7 @@ export $TEXINPUTS
 
 DEPFLAGS = -M -MP -MF $(DEPDIR)/$*.d
 
-LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdf $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
+LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdflua $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
 
 .SECONDARY: .latexmkrc
 .PHONY: clean watermark IEEE base
@@ -73,7 +73,7 @@ base: .gitignore .latexmkrc .git/hooks/post-commit
 	@echo .d >> .gitignore
 
 .latexmkrc:
-	@echo '$$pdflatex' "= 'pdflatex -interaction=nonstopmode';" >> $@
+	@cp Paper-Makefile/.latexmkrc . >> $@
 
 watermark.tex:
 	cp Paper-Makefile/watermark.tex $@
