@@ -14,7 +14,12 @@ export $TEXINPUTS
 
 DEPFLAGS = -M -MP -MF $(DEPDIR)/$*.d
 
-LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdflua $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
+
+ifneq ("$(wildcard .pdflatex)","")
+    LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdf $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
+else
+    LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdflua $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
+endif
 
 .SECONDARY: .latexmkrc
 .PHONY: clean watermark IEEE base
@@ -104,6 +109,6 @@ clean:
 	@-rm -rf *.nav
 	@-rm -rf *.snm
 	@-rm -rf *.vrb
-	@-for i in `find -name '*.dep'`; do  f=`echo $$i | sed 's/.dep//'`; rm $$f; rm $$i; done
+	@-for i in `find . -name '*.dep'`; do  f=`echo $$i | sed 's/.dep//'`; rm $$f; rm $$i; done
 
 include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS))))
