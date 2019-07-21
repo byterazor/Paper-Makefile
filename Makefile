@@ -9,7 +9,7 @@
 #
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
-
+GITDIR = $(shell git rev-parse --show-toplevel)
 export $TEXINPUTS
 
 DEPFLAGS = -M -MP -MF $(DEPDIR)/$*.d
@@ -51,14 +51,14 @@ IEEEtran.cls:
 	@unzip -j ieee-latex-conference-template.zip IEEEtran/IEEEtran.cls >/dev/null
 	@rm ieee-latex-conference-template.zip
 
-base: .gitignore .latexmkrc .git/hooks/post-commit
+base: .gitignore .latexmkrc ${GITDIR}/.git/hooks/post-commit
 
-.git/hooks/post-commit .git/hooks/post-merge .git/hooks/post-checkout: Paper-Makefile/post-commit
-	cp Paper-Makefile/post-commit .git/hooks/
-	cp Paper-Makefile/post-commit .git/hooks/post-merge
-	cp Paper-Makefile/post-commit .git/hooks/post-checkout
-	chmod u+x .git/hooks/*
-	.git/hooks/post-commit
+${GITDIR}/.git/hooks/post-commit ${GITDIR}.git/hooks/post-merge ${GITDIR}.git/hooks/post-checkout: ${MakefileBase}/post-commit
+	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/
+	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/post-merge
+	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/post-checkout
+	chmod u+x ${GITDIR}/.git/hooks/*
+	${GITDIR}/.git/hooks/post-commit
 
 .gitignore:
 	@echo *.pdf >> .gitignore
@@ -78,10 +78,10 @@ base: .gitignore .latexmkrc .git/hooks/post-commit
 	@echo .d >> .gitignore
 
 .latexmkrc:
-	@cp Paper-Makefile/.latexmkrc . >> $@
+	@cp ${MakefileBase}/.latexmkrc . >> $@
 
 watermark.tex:
-	cp Paper-Makefile/watermark.tex $@
+	cp ${MakefileBase}/watermark.tex $@
 
 watermark: all watermark.tex
 	sed -i 's/<email>/$(EMAIL)/g' watermark.tex
