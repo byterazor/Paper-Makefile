@@ -9,7 +9,7 @@
 #
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
-GITDIR = $(shell git rev-parse --show-toplevel)
+GITDIR = $(shell git rev-parse --show-toplevel)/
 export $TEXINPUTS
 
 DEPFLAGS = -M -MP -MF $(DEPDIR)/$*.d
