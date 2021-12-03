@@ -7,6 +7,7 @@
 #	Date  	: 2017-11-22
 # License	:	GPLv2
 #
+SHELL := /bin/bash
 DEPDIR := .d
 $(shell mkdir -p $(DEPDIR) >/dev/null)
 GITDIR = $(shell git rev-parse --show-toplevel)/
@@ -21,18 +22,24 @@ else
     LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdflua $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
 endif
 
-# identify used inkscape version and set command
-INKSCAPE_BASE=$(shell which inkscape)
-INKSCAPE_VERSION=$(shell $(INKSCAPE_BASE) --version 2>/dev/null | cut -d " " -f 2 | cut -d . -f 1)
+INKSCAPE_EXIST=$(shell which inkscape >/dev/null;echo $$?)
 
-ifeq (INKSCAPE_VERSION, 0)
-	INKSCAPE = "echo \"$< --export-pdf=$@\" | DISPLAY= $(INKSCAPE_BASE) -D -y 0 --shell >/dev/null"
-else
-	INKSCAPE = "$(INKSCAPE_BASE) --export-type=pdf -o $@ $<"
+ifeq ($(INKSCAPE_EXIST),0)
+	# identify used inkscape version and set command
+	INKSCAPE_BASE=$(shell which inkscape)
+
+	INKSCAPE_VERSION=$(shell $(INKSCAPE_BASE) --version 2>/dev/null | cut -d " " -f 2 | cut -d . -f 1)
+
+	ifeq ($(INKSCAPE_VERSION),0)
+		INKSCAPE = "echo \"$< --export-pdf=$@\" | DISPLAY= $(INKSCAPE_BASE) -D -y 0 --shell >/dev/null"
+	else
+		INKSCAPE = "$(INKSCAPE_BASE) --export-type=pdf -o $@ $<"
+	endif
+
 endif
 
 .SECONDARY: .latexmkrc
-.PHONY: clean watermark IEEE base
+.PHONY: clean watermark IEEE base INKSCAPE_AVAILABLE
 
 %.pdf : %.dot
 	@echo "**** Generating $@ from dot file $< ****"
@@ -41,8 +48,9 @@ endif
 
 %.pdf: %.svg
 	@echo "**** Generating $@ from svg file $< ****"
+	@if [ $(INKSCAPE_EXIST) != "0" ]; then echo "The inkscape tool required for converting svg --> pdf is missing. Please install it"; exit -1; fi
 	@if [ "$(INKSCAPE_VERSION)" -eq "0" ]; then echo "$<" --export-pdf=$@ | DISPLAY= $(INKSCAPE_BASE) -D -y 0 --shell >/dev/null; fi
-	@if [ "$(INKSCAPE_VERSION)" -eq "1" ]; then $(INKSCAPE_BASE) --export-type=pdf -o $@ $<; fi
+	@if [ "$(INKSCAPE_VERSION)" -eq "1" ]; then $(INKSCAPE_BASE) --export-type=pdf -o $@ $< 1>/dev/null 2>/dev/null; fi
 	@touch $@.dep
 
 %.pdf: $(DEPDIR)/%.d
