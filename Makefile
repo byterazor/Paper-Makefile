@@ -39,7 +39,7 @@ ifeq ($(INKSCAPE_EXIST),0)
 endif
 
 .SECONDARY: .latexmkrc
-.PHONY: clean watermark IEEE base INKSCAPE_AVAILABLE
+.PHONY: clean watermark IEEE base
 
 %.pdf : %.dot
 	@echo "**** Generating $@ from dot file $< ****"
