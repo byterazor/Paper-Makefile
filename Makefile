@@ -1,6 +1,6 @@
 # Makefile for generating pdf from latex files
 # 	-dependency support
-#		-pdf generation of svg files
+#	-pdf generation of svg files
 #   -pdf generation of dot files
 #
 # Author	: Dominik Meyer <dmeyer@hsu-hh.de>
@@ -21,6 +21,16 @@ else
     LATEXMK=export TEXINPUTS=$(TEXINPUTS);latexmk -use-make -f $(DEPFLAGS) -pdflua $(subst .pdf,.tex,$@) 1>>$(subst .pdf,.log,$@) 2>>$(subst .pdf,.log,$@)
 endif
 
+# identify used inkscape version and set command
+INKSCAPE_BASE=$(shell which inkscape)
+INKSCAPE_VERSION=$(shell $(INKSCAPE_BASE) --version 2>/dev/null | cut -d " " -f 2 | cut -d . -f 1)
+
+ifeq (INKSCAPE_VERSION, 0)
+	INKSCAPE = "echo \"$< --export-pdf=$@\" | DISPLAY= $(INKSCAPE_BASE) -D -y 0 --shell >/dev/null"
+else
+	INKSCAPE = "$(INKSCAPE_BASE) --export-type=pdf -o $@ $<"
+endif
+
 .SECONDARY: .latexmkrc
 .PHONY: clean watermark IEEE base
 
@@ -31,7 +41,8 @@ endif
 
 %.pdf: %.svg
 	@echo "**** Generating $@ from svg file $< ****"
-	@echo "$< --export-pdf=$@" | DISPLAY= inkscape -D -y 0 --shell >/dev/null
+	@if [ "$(INKSCAPE_VERSION)" -eq "0" ]; then echo "$<" --export-pdf=$@ | DISPLAY= $(INKSCAPE_BASE) -D -y 0 --shell >/dev/null; fi
+	@if [ "$(INKSCAPE_VERSION)" -eq "1" ]; then $(INKSCAPE_BASE) --export-type=pdf -o $@ $<; fi
 	@touch $@.dep
 
 %.pdf: $(DEPDIR)/%.d
