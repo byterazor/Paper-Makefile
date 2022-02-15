@@ -41,6 +41,12 @@ endif
 .SECONDARY: .latexmkrc
 .PHONY: clean watermark IEEE base
 
+%.pdf: %.image.tex
+	@echo "**** Generating $@ from tex file $< ****"
+	@lualatex -output-directory=`dirname $<` $< >/dev/null
+	IN=`echo $< | sed 's/\.tex/\.pdf/'`;OUT=`echo $< | sed 's/\.image\.tex/\.pdf/'`; cp $$IN $$OUT
+	@touch $@.dep
+
 %.pdf : %.dot
 	@echo "**** Generating $@ from dot file $< ****"
 	@dot -Tpdf $< -o $@
