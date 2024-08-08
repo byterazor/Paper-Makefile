@@ -57,6 +57,11 @@ endif
 	@cp $< $@
 	@touch $@.dep
 
+%.svg: %.excalidraw.svg
+	@echo "**** Renaming excalidraw file $< *****"
+	@cp $< $@
+	@touch $@.dep
+
 %.pdf: %.svg
 	@echo "**** Generating $@ from svg file $< ****"
 	@if [ $(INKSCAPE_EXIST) != "0" ]; then echo "The inkscape tool required for converting svg --> pdf is missing. Please install it"; exit -1; fi
