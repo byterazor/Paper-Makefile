@@ -41,6 +41,11 @@ endif
 .SECONDARY: .latexmkrc
 .PHONY: clean watermark IEEE base
 
+%.svg: %.plantuml
+	@echo "**** Generating $@ from plantuml file $< ****"
+	@plantuml -tsvg $<
+	@touch $@.dep
+
 %.pdf: %.image.tex
 	@echo "**** Generating $@ from tex file $< ****"
 	@lualatex -output-directory=`dirname $<` $< >/dev/null
