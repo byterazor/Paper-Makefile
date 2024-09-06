@@ -43,7 +43,7 @@ endif
 
 %.svg: %.plantuml
 	@echo "**** Generating $@ from plantuml file $< ****"
-	@plantuml -tsvg $<
+	@${MakefileBase}/bin/plantuml -tsvg $<
 	@touch $@.dep
 
 %.pdf: %.image.tex
