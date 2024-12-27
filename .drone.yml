@@ -1,0 +1,28 @@
+---
+
+kind: pipeline
+type: kubernetes
+name: mirror-to-github
+node_selector:
+  kubernetes.io/arch: amd64
+  federationhq.de/location: Blumendorf
+  federationhq.de/compute: true
+steps:
+  - name: github-mirror
+    image: registry.cloud.federationhq.de/drone-github-mirror:latest
+    pull: always
+    settings:
+      GH_TOKEN: 
+        from_secret: GH_TOKEN
+      GH_REPO: "byterazor/Paper-Makefile"
+      GH_REPO_DESC: "Makefile for generating scientific papers written in latex"
+      GH_REPO_HOMEPAGE: https://gitea.federationhq.de/Research/Paper-Makefile"
+depends_on:
+    - push
+
+--- 
+kind: secret
+name: GH_TOKEN
+get:
+  path: github
+  name: token
