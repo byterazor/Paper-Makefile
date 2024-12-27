@@ -17,8 +17,6 @@ steps:
       GH_REPO: "byterazor/Paper-Makefile"
       GH_REPO_DESC: "Makefile for generating scientific papers written in latex"
       GH_REPO_HOMEPAGE: https://gitea.federationhq.de/Research/Paper-Makefile"
-depends_on:
-    - push
 
 --- 
 kind: secret
