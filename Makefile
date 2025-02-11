@@ -87,9 +87,9 @@ $(DEPDIR)/%.d: ;
 IEEE: IEEEtran.cls
 
 IEEEtran.cls:
-	@wget https://www.ieee.org/documents/ieee-latex-conference-template.zip 1>/dev/null 2>/dev/null
-	@unzip -j ieee-latex-conference-template.zip IEEEtran/IEEEtran.cls >/dev/null
-	@rm ieee-latex-conference-template.zip
+	@wget https://www.ieee.org/content/dam/ieee-org/ieee/web/org/conferences/conference-latex-template.zip 1>/dev/null 2>/dev/null
+	@unzip -j conference-latex-template.zip IEEE-conference-template-062824/IEEEtran.cls >/dev/null
+	@rm conference-latex-template.zip
 
 base: .gitignore .latexmkrc ${GITDIR}/.git/hooks/post-commit
 
