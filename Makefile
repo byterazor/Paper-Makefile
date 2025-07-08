@@ -43,7 +43,12 @@ endif
 
 %.svg: %.plantuml
 	@echo "**** Generating $@ from plantuml file $< ****"
-	@${MakefileBase}/bin/plantuml -tsvg $<
+	@cat $< | ${MakefileBase}/bin/plantuml -p -tsvg > $@
+	@touch $@.dep
+
+%.svg: %.puml
+	@echo "**** Generating $@ from plantuml file $< ****"
+	@cat $< | ${MakefileBase}/bin/plantuml -p -tsvg > $@
 	@touch $@.dep
 
 %.pdf: %.image.tex
@@ -93,7 +98,10 @@ IEEEtran.cls:
 
 base: .gitignore .latexmkrc ${GITDIR}/.git/hooks/post-commit
 
-${GITDIR}/.git/hooks/post-commit ${GITDIR}.git/hooks/post-merge ${GITDIR}.git/hooks/post-checkout: ${MakefileBase}/post-commit
+${GITDIR}/.git/hooks: 
+	@mkdir -p ${GITDIR}/.git/hooks
+
+${GITDIR}/.git/hooks/post-commit ${GITDIR}.git/hooks/post-merge ${GITDIR}.git/hooks/post-checkout: ${GITDIR}/.git/hooks ${MakefileBase}/post-commit
 	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/
 	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/post-merge
 	cp ${MakefileBase}/post-commit ${GITDIR}.git/hooks/post-checkout
